@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react'
 const ProjectMonthPage = ({ project, month }) => {
   return (
     <div className="p-4 space-y-4">
-      <ProjectMonthNav project={project} month={month} />
-      <ProjectMonthCalendar month={month} />
+      <ProjectMonthNav {...{ project, month }} />
+      <ProjectMonthCalendar {...{ project, month }} />
     </div>
   )
 }
@@ -20,7 +20,7 @@ const ProjectMonthNav = ({ project, month }) => {
   )
 }
 
-const ProjectMonthCalendar = ({ month }) => {
+const ProjectMonthCalendar = ({ project, month }) => {
   const [jumping, setJumping] = useState(false)
 
   useEffect(() => {
@@ -87,7 +87,7 @@ const ProjectMonthCalendar = ({ month }) => {
 
   const noOfDays = new Date(2020, toMonthIndex[month] + 1, 0).getDate()
   const days = [...Array(noOfDays).keys()].map((el) => {
-    return <Day key={el + 1} day={el + 1} />
+    return <Day key={el + 1} {...{ project, month, day: el + 1 }} />
   })
 
   return (
@@ -111,14 +111,54 @@ const ProjectMonthCalendar = ({ month }) => {
   )
 }
 
-const Day = ({ day }) => {
-  const [hasEntry, setHasEntry] = useState(
-    JSON.parse(localStorage.getItem(`day${day}`)) || false
+const Notes = ({ project, month, day, setShowNotes }) => {
+  const [value, setValue] = useState(
+    localStorage.getItem([project, month, day, 'notes'].join('-')) || ''
   )
 
   useEffect(() => {
-    localStorage.setItem(`day${day}`, JSON.stringify(hasEntry))
-  }, [day, hasEntry])
+    localStorage.setItem([project, month, day, 'notes'].join('-'), value)
+  }, [project, month, day, value])
+
+  const handleChange = (e) => {
+    setValue(e.target.value)
+  }
+
+  const handleTextareaKeyDown = (e) => {
+    e.stopPropagation()
+    switch (e.key) {
+      case 'Escape':
+        e.target.parentElement?.focus()
+        setShowNotes(false)
+        break
+    }
+  }
+
+  return (
+    <textarea
+      autoFocus={true}
+      value={value}
+      onChange={handleChange}
+      onKeyDown={handleTextareaKeyDown}
+      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-white px-2 py-1 font-mono tracking-tight focus:outline-none"
+      style={{ boxShadow: '3px 3px #a0aec0', left: '15px', top: '33px' }}
+    />
+  )
+}
+
+const Day = ({ project, month, day }) => {
+  const [hasEntry, setHasEntry] = useState(
+    JSON.parse(localStorage.getItem([project, month, day].join('-'))) || false
+  )
+
+  useEffect(() => {
+    localStorage.setItem(
+      [project, month, day].join('-'),
+      JSON.stringify(hasEntry)
+    )
+  }, [project, month, day, hasEntry])
+
+  const [showNotes, setShowNotes] = useState(false)
 
   const handleKeyDown = (e) => {
     switch (e.key) {
@@ -144,13 +184,18 @@ const Day = ({ day }) => {
       case 't':
         setHasEntry((hasEntry) => !hasEntry)
         break
+      case 'Enter':
+        e.preventDefault()
+        setHasEntry(true)
+        setShowNotes(true)
+        break
     }
   }
 
   return (
     <div
       id={`day${day}`}
-      className="flex flex-col"
+      className="flex flex-col relative"
       tabIndex="0"
       onKeyDown={handleKeyDown}
     >
@@ -161,6 +206,7 @@ const Day = ({ day }) => {
       >
         &nbsp;
       </div>
+      {showNotes ? <Notes {...{ project, month, day, setShowNotes }} /> : null}
     </div>
   )
 }
