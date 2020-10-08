@@ -21,6 +21,41 @@ const ProjectMonthNav = ({ project, month }) => {
 }
 
 const ProjectMonthCalendar = ({ month }) => {
+  const [jumping, setJumping] = useState(false)
+
+  useEffect(() => {
+    const handleKeydown = (e) => {
+      switch (e.key) {
+        case 'j':
+          document.querySelector('#day1')?.focus()
+          break
+        case '/':
+          e.preventDefault()
+          setJumping(true)
+          break
+      }
+    }
+
+    const id = window.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      window.removeEventListener(id)
+    }
+  }, [])
+
+  const handleKeyDown = (e) => {
+    e.stopPropagation()
+    switch (e.key) {
+      case 'Enter':
+        document.querySelector(`#day${e.target.value}`)?.focus()
+        setJumping(false)
+        break
+      case 'Escape':
+        setJumping(false)
+        break
+    }
+  }
+
   const daysOfTheWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
   const header = daysOfTheWeek.map((day) => {
     return (
@@ -60,6 +95,15 @@ const ProjectMonthCalendar = ({ month }) => {
       className="w-64 grid grid-cols-7 border border-gray-900 rounded"
       style={{ boxShadow: '3px 3px #a0aec0' }}
     >
+      {jumping ? (
+        <input
+          type="text"
+          autoFocus={true}
+          className="absolute m-1 w-8 bg-red-500 rounded focus:outline-none text-center font-mono tracking-tight"
+          onKeyDown={handleKeyDown}
+          style={{ boxShadow: '3px 3px #a0aec0' }}
+        />
+      ) : null}
       {header}
       {filler}
       {days}
@@ -85,6 +129,7 @@ const Day = ({ day }) => {
         e.target.previousElementSibling?.focus()
         break
       case 'j':
+        e.stopPropagation()
         document.querySelector(`#day${day + 7}`)?.focus()
         break
       case 'k':
