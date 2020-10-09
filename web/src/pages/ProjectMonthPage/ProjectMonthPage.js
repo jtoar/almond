@@ -27,7 +27,7 @@ const ProjectMonthCalendar = ({ project, month }) => {
           e.preventDefault()
           e.ctrlKey
             ? setJumping(true)
-            : document.querySelector('#day1')?.focus()
+            : document.querySelector(`#day${new Date().getDate()}`)?.focus()
       }
     }
 
