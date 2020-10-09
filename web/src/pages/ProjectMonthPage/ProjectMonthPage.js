@@ -1,10 +1,15 @@
 import { useEffect, useState } from 'react'
 
 const ProjectMonthPage = ({ project, month }) => {
+  const [notes, setNotes] = useState(null)
+
   return (
     <div className="p-4 space-y-4">
       <ProjectMonthNav {...{ project, month }} />
-      <ProjectMonthCalendar {...{ project, month }} />
+      <div className="flex flex-row space-x-4">
+        <ProjectMonthCalendar {...{ project, month, setNotes }} />
+        {notes}
+      </div>
     </div>
   )
 }
@@ -17,7 +22,7 @@ const ProjectMonthNav = ({ project, month }) => {
   )
 }
 
-const ProjectMonthCalendar = ({ project, month }) => {
+const ProjectMonthCalendar = ({ project, month, setNotes }) => {
   const [jumping, setJumping] = useState(false)
 
   useEffect(() => {
@@ -67,7 +72,7 @@ const ProjectMonthCalendar = ({ project, month }) => {
 
   const noOfDays = new Date(2020, toMonthIndex[month] + 1, 0).getDate()
   const days = [...Array(noOfDays).keys()].map((el) => {
-    return <Day key={el + 1} {...{ project, month, day: el + 1 }} />
+    return <Day key={el + 1} {...{ project, month, day: el + 1, setNotes }} />
   })
 
   return (
@@ -87,7 +92,7 @@ const ProjectMonthCalendar = ({ project, month }) => {
   )
 }
 
-const Notes = ({ project, month, day, setShowNotes }) => {
+const Notes = ({ project, month, day, setNotes }) => {
   const [value, setValue] = useState(
     localStorage.getItem([project, month, day, 'notes'].join('-')) || ''
   )
@@ -104,8 +109,8 @@ const Notes = ({ project, month, day, setShowNotes }) => {
     e.stopPropagation()
     switch (e.key) {
       case 'Escape':
-        e.target.parentElement?.focus()
-        setShowNotes(false)
+        document.querySelector(`#day${day}`)?.focus()
+        setNotes(null)
         break
     }
   }
@@ -116,13 +121,12 @@ const Notes = ({ project, month, day, setShowNotes }) => {
       value={value}
       onChange={handleChange}
       onKeyDown={handleTextareaKeyDown}
-      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
-      style={{ left: '15px', top: '33px' }}
+      className="w-64 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
     />
   )
 }
 
-const Day = ({ project, month, day }) => {
+const Day = ({ project, month, day, setNotes }) => {
   const [hasEntry, setHasEntry] = useState(
     JSON.parse(localStorage.getItem([project, month, day].join('-'))) || false
   )
@@ -133,8 +137,6 @@ const Day = ({ project, month, day }) => {
       JSON.stringify(hasEntry)
     )
   }, [project, month, day, hasEntry])
-
-  const [showNotes, setShowNotes] = useState(false)
 
   const handleKeyDown = (e) => {
     switch (e.key) {
@@ -164,7 +166,7 @@ const Day = ({ project, month, day }) => {
         break
       case 'Enter':
         e.preventDefault()
-        setShowNotes(true)
+        setNotes(<Notes {...{ project, month, day, setNotes }} />)
         break
       case 'Escape':
         e.target.blur()
@@ -203,7 +205,6 @@ const Day = ({ project, month, day }) => {
       >
         {hasNotes}
       </div>
-      {showNotes ? <Notes {...{ project, month, day, setShowNotes }} /> : null}
     </div>
   )
 }
