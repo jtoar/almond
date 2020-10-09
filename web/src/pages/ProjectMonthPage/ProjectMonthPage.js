@@ -3,11 +3,24 @@ import { useEffect, useState } from 'react'
 const ProjectMonthPage = ({ project, month }) => {
   const [notes, setNotes] = useState(null)
 
+  const startsOn = new Date(2020, toMonthIndex[month]).getDay()
+  const filler = [...Array(startsOn).keys()].map((el) => {
+    return <div key={el}>&nbsp;</div>
+  })
+
+  const noOfDays = new Date(2020, toMonthIndex[month] + 1, 0).getDate()
+  const days = [...Array(noOfDays).keys()].map((el) => {
+    return <Day key={el + 1} {...{ project, month, day: el + 1, setNotes }} />
+  })
+
   return (
     <div className="p-4 space-y-4">
       <ProjectMonthNav {...{ project, month }} />
       <div className="flex flex-row space-x-4">
-        <ProjectMonthCalendar {...{ project, month, setNotes }} />
+        <ProjectMonthCalendar>
+          {filler}
+          {days}
+        </ProjectMonthCalendar>
         {notes}
       </div>
     </div>
@@ -22,7 +35,7 @@ const ProjectMonthNav = ({ project, month }) => {
   )
 }
 
-const ProjectMonthCalendar = ({ project, month, setNotes }) => {
+const ProjectMonthCalendar = ({ children }) => {
   const [jumping, setJumping] = useState(false)
 
   useEffect(() => {
@@ -65,16 +78,6 @@ const ProjectMonthCalendar = ({ project, month, setNotes }) => {
     )
   })
 
-  const startsOn = new Date(2020, toMonthIndex[month]).getDay()
-  const filler = [...Array(startsOn).keys()].map((el) => {
-    return <div key={el}>&nbsp;</div>
-  })
-
-  const noOfDays = new Date(2020, toMonthIndex[month] + 1, 0).getDate()
-  const days = [...Array(noOfDays).keys()].map((el) => {
-    return <Day key={el + 1} {...{ project, month, day: el + 1, setNotes }} />
-  })
-
   return (
     <div className="w-64 grid grid-cols-7 border border-gray-900 rounded shadow-kp">
       {jumping ? (
@@ -86,8 +89,7 @@ const ProjectMonthCalendar = ({ project, month, setNotes }) => {
         />
       ) : null}
       {header}
-      {filler}
-      {days}
+      {children}
     </div>
   )
 }
