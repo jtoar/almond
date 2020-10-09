@@ -5,7 +5,11 @@ module.exports = {
   },
   purge: [],
   theme: {
-    extend: {},
+    extend: {
+      boxShadow: {
+        kp: '3px 3px #a0aec0',
+      },
+    },
   },
   variants: {},
   plugins: [require('@tailwindcss/ui')],
