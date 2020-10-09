@@ -24,12 +24,10 @@ const ProjectMonthCalendar = ({ project, month }) => {
     const handleKeydown = (e) => {
       switch (e.key) {
         case 'j':
-          document.querySelector('#day1')?.focus()
-          break
-        case '/':
           e.preventDefault()
-          setJumping(true)
-          break
+          e.ctrlKey
+            ? setJumping(true)
+            : document.querySelector('#day1')?.focus()
       }
     }
 
@@ -147,8 +145,10 @@ const Day = ({ project, month, day }) => {
         e.target.previousElementSibling?.focus()
         break
       case 'j':
-        e.stopPropagation()
-        document.querySelector(`#day${day + 7}`)?.focus()
+        if (!e.ctrlKey) {
+          e.stopPropagation()
+          document.querySelector(`#day${day + 7}`)?.focus()
+        }
         break
       case 'k':
         document.querySelector(`#day${day - 7}`)?.focus()
