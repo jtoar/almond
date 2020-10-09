@@ -11,10 +11,7 @@ const ProjectMonthPage = ({ project, month }) => {
 
 const ProjectMonthNav = ({ project, month }) => {
   return (
-    <button
-      className="px-2 py-1 border border-gray-900 rounded font-mono tracking-tight"
-      style={{ boxShadow: '3px 3px #a0aec0' }}
-    >
+    <button className="px-2 py-1 border border-gray-900 rounded font-mono tracking-tight shadow-kp">
       {project} / {month}
     </button>
   )
@@ -76,17 +73,13 @@ const ProjectMonthCalendar = ({ project, month }) => {
   })
 
   return (
-    <div
-      className="w-64 grid grid-cols-7 border border-gray-900 rounded"
-      style={{ boxShadow: '3px 3px #a0aec0' }}
-    >
+    <div className="w-64 grid grid-cols-7 border border-gray-900 rounded shadow-kp">
       {jumping ? (
         <input
           type="text"
           autoFocus={true}
-          className="absolute m-1 w-8 bg-red-500 rounded focus:outline-none text-center font-mono tracking-tight"
+          className="absolute m-1 w-8 bg-red-500 rounded focus:outline-none text-center font-mono tracking-tight shadow-kp"
           onKeyDown={handleKeyDown}
-          style={{ boxShadow: '3px 3px #a0aec0' }}
         />
       ) : null}
       {header}
@@ -125,8 +118,8 @@ const Notes = ({ project, month, day, setShowNotes }) => {
       value={value}
       onChange={handleChange}
       onKeyDown={handleTextareaKeyDown}
-      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-white px-2 py-1 font-mono tracking-tight focus:outline-none"
-      style={{ boxShadow: '3px 3px #a0aec0', left: '15px', top: '33px' }}
+      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-white px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
+      style={{ left: '15px', top: '33px' }}
     />
   )
 }
@@ -194,10 +187,7 @@ const Day = ({ project, month, day }) => {
       >
         {day}
       </div>
-      <div
-        className={hasEntry ? 'bg-red-500' : 'bg-gray-300'}
-        style={hasEntry ? { boxShadow: '3px 3px #a0aec0' } : {}}
-      >
+      <div className={hasEntry ? 'bg-red-500 shadow-kp' : 'bg-gray-200'}>
         &nbsp;
       </div>
       {showNotes ? <Notes {...{ project, month, day, setShowNotes }} /> : null}
