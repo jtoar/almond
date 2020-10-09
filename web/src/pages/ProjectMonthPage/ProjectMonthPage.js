@@ -172,6 +172,12 @@ const Day = ({ project, month, day }) => {
     }
   }
 
+  const hasNotes = localStorage.getItem(
+    [project, month, day, 'notes'].join('-')
+  )
+    ? '\u2022'
+    : '\u00A0'
+
   return (
     <div
       id={`day${day}`}
@@ -187,8 +193,15 @@ const Day = ({ project, month, day }) => {
       >
         {day}
       </div>
-      <div className={hasEntry ? 'bg-red-500 shadow-kp' : 'bg-gray-200'}>
-        &nbsp;
+      <div
+        className={
+          'text-center ' +
+          (hasEntry
+            ? 'bg-red-500 shadow-kp text-red-800'
+            : 'bg-gray-200 text-gray-400')
+        }
+      >
+        {hasNotes}
       </div>
       {showNotes ? <Notes {...{ project, month, day, setShowNotes }} /> : null}
     </div>
