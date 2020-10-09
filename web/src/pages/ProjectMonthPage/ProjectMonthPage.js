@@ -116,7 +116,7 @@ const Notes = ({ project, month, day, setShowNotes }) => {
       value={value}
       onChange={handleChange}
       onKeyDown={handleTextareaKeyDown}
-      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-white px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
+      className="h-64 w-64 absolute z-10 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
       style={{ left: '15px', top: '33px' }}
     />
   )
