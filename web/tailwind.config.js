@@ -1,3 +1,5 @@
+const defaultTheme = require('tailwindcss/defaultTheme')
+
 module.exports = {
   future: {
     removeDeprecatedGapUtilities: true,
@@ -7,7 +9,7 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
-        kp: '3px 3px #a0aec0',
+        kp: `3px 3px ${defaultTheme.colors.gray[500]}`,
       },
     },
   },
