@@ -173,6 +173,9 @@ const Day = ({ project, month, day }) => {
         e.preventDefault()
         setShowNotes(true)
         break
+      case 'Escape':
+        e.target.blur()
+        break
     }
   }
 
