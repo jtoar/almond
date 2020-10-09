@@ -171,7 +171,6 @@ const Day = ({ project, month, day }) => {
         break
       case 'Enter':
         e.preventDefault()
-        setHasEntry(true)
         setShowNotes(true)
         break
     }
