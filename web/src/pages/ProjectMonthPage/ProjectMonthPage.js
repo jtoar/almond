@@ -65,21 +65,6 @@ const ProjectMonthCalendar = ({ project, month }) => {
     )
   })
 
-  const toMonthIndex = {
-    january: 0,
-    february: 1,
-    march: 2,
-    april: 3,
-    may: 4,
-    june: 5,
-    july: 6,
-    august: 7,
-    september: 8,
-    october: 9,
-    november: 10,
-    december: 11,
-  }
-
   const startsOn = new Date(2020, toMonthIndex[month]).getDay()
   const filler = [...Array(startsOn).keys()].map((el) => {
     return <div key={el}>&nbsp;</div>
@@ -199,7 +184,14 @@ const Day = ({ project, month, day }) => {
       tabIndex="0"
       onKeyDown={handleKeyDown}
     >
-      <div className="text-center font-mono">{day}</div>
+      <div
+        className={
+          'text-center font-mono ' +
+          (isToday({ month, day }) ? 'underline' : '')
+        }
+      >
+        {day}
+      </div>
       <div
         className={hasEntry ? 'bg-red-500' : 'bg-gray-300'}
         style={hasEntry ? { boxShadow: '3px 3px #a0aec0' } : {}}
@@ -212,3 +204,26 @@ const Day = ({ project, month, day }) => {
 }
 
 export default ProjectMonthPage
+
+const toMonthIndex = {
+  january: 0,
+  february: 1,
+  march: 2,
+  april: 3,
+  may: 4,
+  june: 5,
+  july: 6,
+  august: 7,
+  september: 8,
+  october: 9,
+  november: 10,
+  december: 11,
+}
+
+const isToday = ({ year = 2020, month, day }) => {
+  const today = new Date()
+  return (
+    new Date(year, toMonthIndex[month], day).getTime() ===
+    new Date(2020, today.getMonth(), today.getDate()).getTime()
+  )
+}
