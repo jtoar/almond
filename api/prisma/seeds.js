@@ -1,22 +1,41 @@
 /* eslint-disable no-console */
 const { PrismaClient } = require('@prisma/client')
 const dotenv = require('dotenv')
+const d3 = require('d3-time')
 
 dotenv.config()
 const db = new PrismaClient()
 
 async function main() {
-  // Seed data is database data that needs to exist for your app to run.
-  // Ideally this file should be idempotent: running it multiple times
-  // will result in the same database state (usually by checking for the
-  // existence of a record before trying to create it). For example:
-  //
-  //   const existing = await db.user.findMany({ where: { email: 'admin@email.com' }})
-  //   if (!existing.length) {
-  //     await db.user.create({ data: { name: 'Admin', email: 'admin@email.com' }})
-  //   }
+  const projects = await db.project.findMany()
 
-  console.info('No data to seed. See api/prisma/seeds.js for info.')
+  if (!projects.length) {
+    await db.project.create({
+      data: {
+        name: 'korean',
+      },
+    })
+  }
+
+  console.log(projects)
+
+  const days = await db.day.findMany()
+
+  if (!days.length) {
+    await db.day.create({
+      data: {
+        project: {
+          connect: {
+            name: 'korean',
+          },
+        },
+        date: d3.timeDay().toISOString(),
+        notes: 'some notes',
+      },
+    })
+  }
+
+  console.log(days)
 }
 
 main()
