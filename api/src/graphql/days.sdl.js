@@ -1,6 +1,5 @@
 export const schema = gql`
   type Day {
-    id: Int!
     createdAt: DateTime!
     updatedAt: DateTime!
     project: Project!
@@ -11,8 +10,8 @@ export const schema = gql`
   }
 
   type Query {
-    days(project: String, month: String): [Day!]!
-    day(id: Int!): Day
+    days(project: String!, month: String!): [Day!]!
+    day(projectName: String!, date: DateTime!): Day
   }
 
   input CreateDayInput {

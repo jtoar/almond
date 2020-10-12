@@ -16,9 +16,14 @@ export const days = ({ projectName, month }) => {
   })
 }
 
-export const day = ({ id }) => {
+export const day = ({ projectName, date }) => {
   return db.day.findOne({
-    where: { id },
+    where: {
+      projectName_date: {
+        projectName,
+        date,
+      },
+    },
   })
 }
 
