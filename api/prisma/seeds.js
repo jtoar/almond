@@ -33,6 +33,18 @@ async function main() {
         notes: 'some notes',
       },
     })
+
+    await db.day.create({
+      data: {
+        project: {
+          connect: {
+            name: 'korean',
+          },
+        },
+        date: new Date(2020, 3, 3).toISOString(),
+        notes: 'some earlier notes',
+      },
+    })
   }
 
   console.log(days)

@@ -11,15 +11,15 @@ export const schema = gql`
   }
 
   type Query {
-    days: [Day!]!
+    days(project: String, month: String): [Day!]!
     day(id: Int!): Day
   }
 
   input CreateDayInput {
     projectName: String!
     date: DateTime!
-    hasEntry: Boolean!
-    notes: String!
+    hasEntry: Boolean
+    notes: String
   }
 
   input UpdateDayInput {

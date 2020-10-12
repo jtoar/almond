@@ -1,7 +1,19 @@
 import { db } from 'src/lib/db'
 
-export const days = () => {
-  return db.day.findMany()
+const toMonthIndex = (month) => {
+  return new Date(`${new Date().getFullYear()} ${month}`).getMonth()
+}
+
+export const days = ({ projectName, month }) => {
+  return db.day.findMany({
+    where: {
+      projectName,
+      date: {
+        gte: new Date(2020, toMonthIndex(month)),
+        lte: new Date(2020, toMonthIndex(month) + 1, 0),
+      },
+    },
+  })
 }
 
 export const day = ({ id }) => {
@@ -11,8 +23,17 @@ export const day = ({ id }) => {
 }
 
 export const createDay = ({ input }) => {
+  const { projectName, ...rest } = input
+
   return db.day.create({
-    data: input,
+    data: {
+      project: {
+        connect: {
+          name: projectName,
+        },
+      },
+      ...rest,
+    },
   })
 }
 
