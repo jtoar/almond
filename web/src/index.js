@@ -6,9 +6,11 @@ import Routes from 'src/Routes'
 
 import './index.css'
 
+import cache from './cache.js'
+
 ReactDOM.render(
   <FatalErrorBoundary page={FatalErrorPage}>
-    <RedwoodProvider>
+    <RedwoodProvider graphQLClientConfig={{ cache }}>
       <Routes />
     </RedwoodProvider>
   </FatalErrorBoundary>,
