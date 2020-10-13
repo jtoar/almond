@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
+import { toMonthIndex } from 'common/common'
+import DayCell from 'src/components/DayCell'
 
 const ProjectMonthPage = ({ project, month }) => {
   const [notes, setNotes] = useState(null)
 
-  const startsOn = new Date(2020, toMonthIndex[month]).getDay()
+  const startsOn = new Date(2020, toMonthIndex(month)).getDay()
   const filler = [...Array(startsOn).keys()].map((el) => {
     return <div key={el}>&nbsp;</div>
   })
 
-  const noOfDays = new Date(2020, toMonthIndex[month] + 1, 0).getDate()
+  const noOfDays = new Date(2020, toMonthIndex(month) + 1, 0).getDate()
   const days = [...Array(noOfDays).keys()].map((el) => {
-    return <Day key={el + 1} {...{ project, month, day: el + 1, setNotes }} />
+    const date = new Date(2020, toMonthIndex(month), el + 1).toISOString()
+    return <DayCell key={el + 1} {...{ project, date, setNotes }} />
   })
 
   return (
@@ -52,7 +55,7 @@ const ProjectMonthCalendar = ({ children }) => {
     const id = window.addEventListener('keydown', handleKeydown)
 
     return () => {
-      window.removeEventListener(id)
+      window.removeEventListener('keydown', id)
     }
   }, [])
 
@@ -94,144 +97,4 @@ const ProjectMonthCalendar = ({ children }) => {
   )
 }
 
-const Notes = ({ project, month, day, setNotes }) => {
-  const [value, setValue] = useState(
-    localStorage.getItem([project, month, day, 'notes'].join('-')) || ''
-  )
-
-  useEffect(() => {
-    localStorage.setItem([project, month, day, 'notes'].join('-'), value)
-  }, [project, month, day, value])
-
-  const handleChange = (e) => {
-    setValue(e.target.value)
-  }
-
-  const handleTextareaKeyDown = (e) => {
-    e.stopPropagation()
-    switch (e.key) {
-      case 'Escape':
-        document.querySelector(`#day${day}`)?.focus()
-        setNotes(null)
-        break
-    }
-  }
-
-  return (
-    <textarea
-      autoFocus={true}
-      value={value}
-      onChange={handleChange}
-      onKeyDown={handleTextareaKeyDown}
-      className="w-64 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
-    />
-  )
-}
-
-const Day = ({ project, month, day, setNotes }) => {
-  const [hasEntry, setHasEntry] = useState(
-    JSON.parse(localStorage.getItem([project, month, day].join('-'))) || false
-  )
-
-  useEffect(() => {
-    localStorage.setItem(
-      [project, month, day].join('-'),
-      JSON.stringify(hasEntry)
-    )
-  }, [project, month, day, hasEntry])
-
-  const handleKeyDown = (e) => {
-    switch (e.key) {
-      /**
-       * Navigation
-       */
-      case 'h':
-        e.target.previousElementSibling?.focus()
-        break
-      case 'j':
-        if (!e.ctrlKey) {
-          e.stopPropagation()
-          document.querySelector(`#day${day + 7}`)?.focus()
-        }
-        break
-      case 'k':
-        document.querySelector(`#day${day - 7}`)?.focus()
-        break
-      case 'l':
-        e.target.nextElementSibling?.focus()
-        break
-      /**
-       * Logic
-       */
-      case 't':
-        setHasEntry((hasEntry) => !hasEntry)
-        break
-      case 'Enter':
-        e.preventDefault()
-        setNotes(<Notes {...{ project, month, day, setNotes }} />)
-        break
-      case 'Escape':
-        e.target.blur()
-        break
-    }
-  }
-
-  const hasNotes = localStorage.getItem(
-    [project, month, day, 'notes'].join('-')
-  )
-    ? '\u2022'
-    : '\u00A0'
-
-  return (
-    <div
-      id={`day${day}`}
-      className="flex flex-col relative"
-      tabIndex="0"
-      onKeyDown={handleKeyDown}
-    >
-      <div
-        className={
-          'text-center font-mono ' +
-          (isToday({ month, day }) ? 'underline' : '')
-        }
-      >
-        {day}
-      </div>
-      <div
-        className={
-          'text-center ' +
-          (hasEntry
-            ? 'bg-red-500 shadow-kp text-red-800'
-            : 'bg-gray-200 text-gray-400')
-        }
-      >
-        {hasNotes}
-      </div>
-    </div>
-  )
-}
-
 export default ProjectMonthPage
-
-const toMonthIndex = {
-  january: 0,
-  february: 1,
-  march: 2,
-  april: 3,
-  may: 4,
-  june: 5,
-  july: 6,
-  august: 7,
-  september: 8,
-  october: 9,
-  november: 10,
-  december: 11,
-}
-
-const isToday = ({ year = 2020, month, day }) => {
-  const today = new Date()
-  return (
-    new Date(year, toMonthIndex[month], day).getTime() ===
-    new Date(2020, today.getMonth(), today.getDate()).getTime()
-  )
-}

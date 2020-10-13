@@ -1,13 +1,10 @@
 import { db } from 'src/lib/db'
+import { toMonthIndex } from 'common/common'
 
-const toMonthIndex = (month) => {
-  return new Date(`${new Date().getFullYear()} ${month}`).getMonth()
-}
-
-export const days = ({ projectName, month }) => {
+export const daysByProjectMonth = ({ project, month }) => {
   return db.day.findMany({
     where: {
-      projectName,
+      projectName: project,
       date: {
         gte: new Date(2020, toMonthIndex(month)),
         lte: new Date(2020, toMonthIndex(month) + 1, 0),
@@ -16,42 +13,50 @@ export const days = ({ projectName, month }) => {
   })
 }
 
-export const day = ({ projectName, date }) => {
+export const dayByProjectDate = ({ project, date }) => {
   return db.day.findOne({
     where: {
       projectName_date: {
-        projectName,
+        projectName: project,
         date,
       },
     },
   })
 }
 
-export const createDay = ({ input }) => {
-  const { projectName, ...rest } = input
-
+export const createDay = ({ project, date }) => {
   return db.day.create({
     data: {
       project: {
         connect: {
-          name: projectName,
+          name: project,
         },
       },
-      ...rest,
+      date,
     },
   })
 }
 
-export const updateDay = ({ id, input }) => {
-  return db.day.update({
-    data: input,
-    where: { id },
+export const toggleHasEntry = async ({ project, date }) => {
+  const { hasEntry } = await db.day.findOne({
+    where: {
+      projectName_date: {
+        projectName: project,
+        date,
+      },
+    },
   })
-}
 
-export const deleteDay = ({ id }) => {
-  return db.day.delete({
-    where: { id },
+  return db.day.update({
+    where: {
+      projectName_date: {
+        projectName: project,
+        date,
+      },
+    },
+    data: {
+      hasEntry: !hasEntry,
+    },
   })
 }
 

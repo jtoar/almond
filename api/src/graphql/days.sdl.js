@@ -10,27 +10,12 @@ export const schema = gql`
   }
 
   type Query {
-    days(project: String!, month: String!): [Day!]!
-    day(projectName: String!, date: DateTime!): Day
-  }
-
-  input CreateDayInput {
-    projectName: String!
-    date: DateTime!
-    hasEntry: Boolean
-    notes: String
-  }
-
-  input UpdateDayInput {
-    projectName: String
-    date: DateTime
-    hasEntry: Boolean
-    notes: String
+    daysByProjectMonth(project: String!, month: String!): [Day!]!
+    dayByProjectDate(project: String!, date: DateTime!): Day
   }
 
   type Mutation {
-    createDay(input: CreateDayInput!): Day!
-    updateDay(id: Int!, input: UpdateDayInput!): Day!
-    deleteDay(id: Int!): Day!
+    createDay(project: String!, date: DateTime!): Day!
+    toggleHasEntry(project: String!, date: DateTime!): Day!
   }
 `
