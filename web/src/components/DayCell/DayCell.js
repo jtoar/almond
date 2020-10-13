@@ -1,7 +1,6 @@
 /**
  * @todo maybe persisting the cache will skip loading?
  */
-import { useState } from 'react'
 import { isToday } from 'common/common'
 import { useMutation } from '@redwoodjs/web'
 
@@ -11,7 +10,6 @@ export const QUERY = gql`
       projectName
       date
       hasEntry
-      notes
     }
   }
 `
@@ -42,7 +40,6 @@ const TOGGLE_MUTATION = gql`
       projectName
       date
       hasEntry
-      notes
     }
   }
 `
@@ -53,12 +50,14 @@ const CREATE_MUTATION = gql`
       projectName
       date
       hasEntry
-      notes
     }
   }
 `
 
-export const Success = ({ project, date, dayByProjectDate, setNotes }) => {
+/**
+ * @todo add notes
+ */
+export const Success = ({ project, date, dayByProjectDate }) => {
   const date_ = new Date(date)
   const day = date_.getDate()
 
@@ -106,12 +105,12 @@ export const Success = ({ project, date, dayByProjectDate, setNotes }) => {
       case 't':
         toggle()
         break
-      case 'Enter':
-        e.preventDefault()
-        setNotes(
-          <Notes {...{ notes: dayByProjectDate?.notes, day, setNotes }} />
-        )
-        break
+      // case 'Enter':
+      //   e.preventDefault()
+      //   setNotes(
+      //     <Notes {...{ notes: dayByProjectDate?.notes, day, setNotes }} />
+      //   )
+      //   break
       case 'Escape':
         e.target.blur()
         break
@@ -140,36 +139,37 @@ export const Success = ({ project, date, dayByProjectDate, setNotes }) => {
             : 'bg-gray-200 text-gray-400')
         }
       >
-        {dayByProjectDate?.notes ? '\u2022' : '\u00A0'}
+        {/* {dayByProjectDate?.notes ? '\u2022' : '\u00A0'} */}
+        &nbsp;
       </div>
     </div>
   )
 }
 
-const Notes = ({ notes, day, setNotes }) => {
-  const [value, setValue] = useState(notes)
+// const Notes = ({ notes, day, setNotes }) => {
+//   const [value, setValue] = useState(notes)
 
-  const handleChange = (e) => {
-    setValue(e.target.value)
-  }
+//   const handleChange = (e) => {
+//     setValue(e.target.value)
+//   }
 
-  const handleTextareaKeyDown = (e) => {
-    e.stopPropagation()
-    switch (e.key) {
-      case 'Escape':
-        document.querySelector(`#day${day}`)?.focus()
-        setNotes(null)
-        break
-    }
-  }
+//   const handleTextareaKeyDown = (e) => {
+//     e.stopPropagation()
+//     switch (e.key) {
+//       case 'Escape':
+//         document.querySelector(`#day${day}`)?.focus()
+//         setNotes(null)
+//         break
+//     }
+//   }
 
-  return (
-    <textarea
-      autoFocus={true}
-      value={value}
-      onChange={handleChange}
-      onKeyDown={handleTextareaKeyDown}
-      className="w-64 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
-    />
-  )
-}
+//   return (
+//     <textarea
+//       autoFocus={true}
+//       value={value}
+//       onChange={handleChange}
+//       onKeyDown={handleTextareaKeyDown}
+//       className="w-64 border border-gray-900 rounded bg-gray-50 px-2 py-1 font-mono tracking-tight focus:outline-none shadow-kp"
+//     />
+//   )
+// }

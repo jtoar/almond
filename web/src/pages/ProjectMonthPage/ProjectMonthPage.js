@@ -3,7 +3,7 @@ import { toMonthIndex } from 'common/common'
 import DayCell from 'src/components/DayCell'
 
 const ProjectMonthPage = ({ project, month }) => {
-  const [notes, setNotes] = useState(null)
+  // const [notes, setNotes] = useState(null)
 
   const startsOn = new Date(2020, toMonthIndex(month)).getDay()
   const filler = [...Array(startsOn).keys()].map((el) => {
@@ -13,19 +13,19 @@ const ProjectMonthPage = ({ project, month }) => {
   const noOfDays = new Date(2020, toMonthIndex(month) + 1, 0).getDate()
   const days = [...Array(noOfDays).keys()].map((el) => {
     const date = new Date(2020, toMonthIndex(month), el + 1).toISOString()
-    return <DayCell key={el + 1} {...{ project, date, setNotes }} />
+    return <DayCell key={date} {...{ project, date }} />
   })
 
   return (
     <div className="p-4 space-y-4">
       <ProjectMonthNav {...{ project, month }} />
-      <div className="flex flex-row space-x-4">
-        <ProjectMonthCalendar>
-          {filler}
-          {days}
-        </ProjectMonthCalendar>
-        {notes}
-      </div>
+      {/* <div className="flex flex-row space-x-4"> */}
+      <ProjectMonthCalendar>
+        {filler}
+        {days}
+      </ProjectMonthCalendar>
+      {/* {notes} */}
+      {/* </div> */}
     </div>
   )
 }
