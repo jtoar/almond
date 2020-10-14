@@ -5,5 +5,21 @@ export default new InMemoryCache({
     Day: {
       keyFields: ['projectName', 'date'],
     },
+    Mutation: {
+      fields: {
+        createDay: {
+          merge(_, incoming, { cache }) {
+            cache.modify({
+              fields: {
+                daysByProjectMonth(existing) {
+                  return [...existing, incoming]
+                },
+              },
+            })
+            return incoming
+          },
+        },
+      },
+    },
   },
 })

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { toMonthIndex } from 'common/common'
-import DayCell from 'src/components/DayCell'
+import DaysCell from 'src/components/DaysCell'
 
 const ProjectMonthPage = ({ project, month }) => {
   // const [notes, setNotes] = useState(null)
@@ -10,19 +10,13 @@ const ProjectMonthPage = ({ project, month }) => {
     return <div key={el}>&nbsp;</div>
   })
 
-  const noOfDays = new Date(2020, toMonthIndex(month) + 1, 0).getDate()
-  const days = [...Array(noOfDays).keys()].map((el) => {
-    const date = new Date(2020, toMonthIndex(month), el + 1).toISOString()
-    return <DayCell key={date} {...{ project, date }} />
-  })
-
   return (
     <div className="p-4 space-y-4">
       <ProjectMonthNav {...{ project, month }} />
       {/* <div className="flex flex-row space-x-4"> */}
       <ProjectMonthCalendar>
         {filler}
-        {days}
+        <DaysCell {...{ project, month }} />
       </ProjectMonthCalendar>
       {/* {notes} */}
       {/* </div> */}
