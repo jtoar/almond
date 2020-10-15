@@ -8,11 +8,27 @@ export default new InMemoryCache({
     Mutation: {
       fields: {
         createDay: {
-          merge(_, incoming, { cache }) {
+          merge(_, incoming, { cache, variables: { project } }) {
             cache.modify({
               fields: {
-                daysByProjectMonth(existing) {
-                  return [...existing, incoming]
+                daysByProjectMonth(existing, { storeFieldName }) {
+                  if (storeFieldName.includes(project)) {
+                    return [...existing, incoming]
+                  }
+                },
+              },
+            })
+            return incoming
+          },
+        },
+        createDayWithNotes: {
+          merge(_, incoming, { cache, variables: { project } }) {
+            cache.modify({
+              fields: {
+                daysByProjectMonth(existing, { storeFieldName }) {
+                  if (storeFieldName.includes(project)) {
+                    return [...existing, incoming]
+                  }
                 },
               },
             })

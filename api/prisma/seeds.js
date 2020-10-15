@@ -15,6 +15,21 @@ async function main() {
         name: 'korean',
       },
     })
+    await db.project.create({
+      data: {
+        name: 'youth',
+      },
+    })
+    await db.project.create({
+      data: {
+        name: 'redwood',
+      },
+    })
+    await db.project.create({
+      data: {
+        name: 'almond',
+      },
+    })
   }
 
   console.log(projects)
@@ -30,19 +45,7 @@ async function main() {
           },
         },
         date: d3.timeDay().toISOString(),
-        notes: 'some notes',
-      },
-    })
-
-    await db.day.create({
-      data: {
-        project: {
-          connect: {
-            name: 'korean',
-          },
-        },
-        date: new Date(2020, 3, 3).toISOString(),
-        notes: 'some earlier notes',
+        notes: 'lingq',
       },
     })
   }

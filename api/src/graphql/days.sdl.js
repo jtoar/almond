@@ -17,5 +17,7 @@ export const schema = gql`
   type Mutation {
     createDay(project: String!, date: DateTime!): Day!
     toggleHasEntry(project: String!, date: DateTime!): Day!
+    updateNotes(project: String!, date: DateTime!, notes: String!): Day!
+    createDayWithNotes(project: String!, date: DateTime!, notes: String!): Day!
   }
 `

@@ -1,9 +1,13 @@
 import { useEffect, useState } from 'react'
+import { useMutation } from '@redwoodjs/web'
+
 import { toMonthIndex } from 'common/common'
+
 import DaysCell from 'src/components/DaysCell'
+import ProjectsCell from 'src/components/ProjectsCell'
 
 const ProjectMonthPage = ({ project, month }) => {
-  // const [notes, setNotes] = useState(null)
+  const [notes, setNotes] = useState(null)
 
   const startsOn = new Date(2020, toMonthIndex(month)).getDay()
   const filler = [...Array(startsOn).keys()].map((el) => {
@@ -13,22 +17,68 @@ const ProjectMonthPage = ({ project, month }) => {
   return (
     <div className="p-4 space-y-4">
       <ProjectMonthNav {...{ project, month }} />
-      {/* <div className="flex flex-row space-x-4"> */}
-      <ProjectMonthCalendar>
-        {filler}
-        <DaysCell {...{ project, month }} />
-      </ProjectMonthCalendar>
-      {/* {notes} */}
-      {/* </div> */}
+      <div className="flex flex-row space-x-4">
+        <ProjectMonthCalendar>
+          {filler}
+          <DaysCell {...{ project, month, setNotes }} />
+        </ProjectMonthCalendar>
+        {notes}
+      </div>
     </div>
   )
 }
 
 const ProjectMonthNav = ({ project, month }) => {
+  const [showDialog, setShowDialog] = useState(false)
+
+  useEffect(() => {
+    const handleKeydown = (e) => {
+      switch (e.key) {
+        case 'k':
+          if (e.ctrlKey) {
+            e.preventDefault()
+            setShowDialog(true)
+          }
+          break
+      }
+    }
+
+    const id = window.addEventListener('keydown', handleKeydown)
+
+    return () => {
+      window.removeEventListener('keydown', id)
+    }
+  }, [])
+
   return (
-    <button className="px-2 py-1 border border-gray-900 rounded font-mono tracking-tight shadow-kp">
-      {project} / {month}
-    </button>
+    <div className="relative">
+      <button
+        className="px-2 py-1 border border-gray-900 rounded font-mono tracking-tight shadow-kp"
+        onClick={() => setShowDialog((prev) => !prev)}
+      >
+        {project} / {month}
+      </button>
+      {showDialog ? <ProjectMonthMenu month={month} /> : null}
+    </div>
+  )
+}
+
+const ProjectMonthMenu = ({ month }) => {
+  const [showDialog, setShowDialog] = useState(false)
+
+  return (
+    <div className="w-48 absolute z-20 top-5 left-2 bg-gray-50 border border-gray-900 rounded shadow-kp divide-y divide-gray-900">
+      <button
+        onClick={(e) => {
+          e.stopPropagation()
+          setShowDialog((prev) => !prev)
+        }}
+        className="ml-2 my-2 w-16 px-2 py-1 border border-gray-900 rounded font-mono tracking-tight"
+      >
+        add +
+      </button>
+      <ProjectsCell month={month} />
+    </div>
   )
 }
 
