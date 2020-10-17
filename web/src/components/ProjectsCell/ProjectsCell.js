@@ -7,7 +7,6 @@ export const QUERY = gql`
       createdAt
       updatedAt
       name
-      noOfDaysHasEntry
     }
   }
 `
@@ -18,7 +17,7 @@ export const Empty = () => <div>Empty</div>
 
 export const Failure = ({ error }) => <div>Error: {error.message}</div>
 
-export const Success = ({ projects, month }) => {
+export const Success = ({ projects }) => {
   const handleKeyDown = (e) => {
     switch (e.key) {
       case 'j':
@@ -34,20 +33,24 @@ export const Success = ({ projects, month }) => {
 
   const projectMonthPageLinks = projects.map((project) => {
     return (
-      <li key={project.id} onKeyDown={handleKeyDown} tabIndex="0">
-        <Link to={routes.projectMonth({ project: project.name, month })}>
-          {project.name + ' '}
-          <span className="bg-red-500 rounded shadow-kp px-2 py-1">
-            {project.noOfDaysHasEntry}
-          </span>
-        </Link>
-      </li>
+      <Link
+        key={project.id}
+        to={routes.projectMonth({
+          project: project.name,
+          month: Intl.DateTimeFormat('en-US', { month: 'long' })
+            .format(new Date())
+            .toLowerCase(),
+        })}
+        onKeyDown={handleKeyDown}
+      >
+        {project.name}
+      </Link>
     )
   })
 
   return (
-    <ul className="px-4 py-2 space-y-2 font-mono tracking-tight">
+    <div className="flex flex-col px-4 py-2 space-y-2 font-mono tracking-tight">
       {projectMonthPageLinks}
-    </ul>
+    </div>
   )
 }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@redwoodjs/web'
+import { navigate, routes } from '@redwoodjs/router'
 
 import { toMonthIndex } from 'common/common'
 
@@ -40,6 +41,9 @@ const ProjectMonthNav = ({ project, month }) => {
             setShowDialog(true)
           }
           break
+        case 'Escape':
+          setShowDialog(false)
+          break
       }
     }
 
@@ -52,32 +56,70 @@ const ProjectMonthNav = ({ project, month }) => {
 
   return (
     <div className="relative">
-      <button
-        className="px-2 py-1 border border-gray-900 rounded font-mono tracking-tight shadow-kp"
-        onClick={() => setShowDialog((prev) => !prev)}
-      >
-        {project} / {month}
-      </button>
-      {showDialog ? <ProjectMonthMenu month={month} /> : null}
+      <div className="inline-block border border-gray-900 rounded font-mono tracking-tight shadow-kp divide-x divide-gray-900">
+        <button
+          onClick={() => setShowDialog((prev) => !prev)}
+          className="px-2 py-1"
+        >
+          {project}
+        </button>
+        <button className="px-2 py-1">{month}</button>
+      </div>
+      {showDialog ? <ProjectMonthMenu /> : null}
     </div>
   )
 }
 
-const ProjectMonthMenu = ({ month }) => {
-  const [showDialog, setShowDialog] = useState(false)
+const CREATE_PROJECT = gql`
+  mutation CreateProjectMutation($name: String!) {
+    createProject(name: $name) {
+      id
+      name
+    }
+  }
+`
+
+const ProjectMonthMenu = () => {
+  const [createProject] = useMutation(CREATE_PROJECT)
+  const [value, setValue] = useState('')
+  const handleClick = () => {
+    createProject({ variables: { name: value } })
+    setValue('')
+    navigate(routes.projectMonth({ project: value, month: 'october' }))
+  }
 
   return (
     <div className="w-48 absolute z-20 top-5 left-2 bg-gray-50 border border-gray-900 rounded shadow-kp divide-y divide-gray-900">
-      <button
-        onClick={(e) => {
-          e.stopPropagation()
-          setShowDialog((prev) => !prev)
-        }}
-        className="ml-2 my-2 w-16 px-2 py-1 border border-gray-900 rounded font-mono tracking-tight"
-      >
-        add +
-      </button>
-      <ProjectsCell month={month} />
+      <div className="flex flex-row">
+        <input
+          autoFocus={true}
+          className="ml-2 my-2 h-7 w-20 bg-gray-300 rounded font-mono tracking-tight"
+          style={{ boxShadow: 'inset 3px 3px #a0aec0' }}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <button
+          onClick={handleClick}
+          className="ml-2 my-2 w-16 px-2 border border-gray-900 rounded font-mono tracking-tight"
+        >
+          add +
+        </button>
+      </div>
+      <ProjectsCell />
+    </div>
+  )
+}
+
+const ProjectMonthNav_ = () => {
+  return (
+    <div
+      className="col-span-7 pt-1 text-center bg-red-600 border-b border-gray-900"
+      style={{ paddingBottom: '0.45rem' }}
+    >
+      <div className="inline-block divide-x divide-gray-900 border border-gray-900 rounded shadow-kp bg-red-400">
+        <button className="px-2 py-1">korean</button>
+        <button className="px-2 py-1">october</button>
+      </div>
     </div>
   )
 }
@@ -135,6 +177,7 @@ const ProjectMonthCalendar = ({ children }) => {
           onKeyDown={handleKeyDown}
         />
       ) : null}
+      <ProjectMonthNav_ />
       {header}
       {children}
     </div>

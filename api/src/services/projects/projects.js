@@ -4,28 +4,9 @@ export const projects = () => {
   return db.project.findMany()
 }
 
-export const project = ({ id }) => {
-  return db.project.findOne({
-    where: { id },
-  })
-}
-
-export const createProject = ({ input }) => {
+export const createProject = ({ name }) => {
   return db.project.create({
-    data: input,
-  })
-}
-
-export const updateProject = ({ id, input }) => {
-  return db.project.update({
-    data: input,
-    where: { id },
-  })
-}
-
-export const deleteProject = ({ id }) => {
-  return db.project.delete({
-    where: { id },
+    data: { name },
   })
 }
 

@@ -166,19 +166,6 @@ export const Success = ({ project, month, daysByProjectMonth, setNotes }) => {
   return days
 }
 
-const UPDATE_NOTES = gql`
-  mutation UpdateNotesMutation(
-    $project: String!
-    $date: DateTime!
-    $notes: String!
-  ) {
-    updateNotes(project: $project, date: $date, notes: $notes) {
-      projectName
-      date
-      notes
-    }
-  }
-`
 const CREATE_NOTES = gql`
   mutation CreateDayWithNotesMutation(
     $project: String!
@@ -194,13 +181,28 @@ const CREATE_NOTES = gql`
   }
 `
 
-const Notes = ({ project, notes, date, setNotes }) => {
-  const [updateNotes] = useMutation(UPDATE_NOTES)
-  const [createNotes] = useMutation(CREATE_NOTES)
+const UPDATE_NOTES = gql`
+  mutation UpdateNotesMutation(
+    $project: String!
+    $date: DateTime!
+    $notes: String!
+  ) {
+    updateNotes(project: $project, date: $date, notes: $notes) {
+      projectName
+      date
+      notes
+    }
+  }
+`
 
-  const updateOrCreate = notes
-    ? (notes_) => updateNotes({ variables: { project, date, notes: notes_ } })
-    : (notes_) => createNotes({ variables: { project, date, notes: notes_ } })
+const Notes = ({ project, notes, date, setNotes }) => {
+  const [createNotes] = useMutation(CREATE_NOTES)
+  const [updateNotes] = useMutation(UPDATE_NOTES)
+
+  const createOrUpdate =
+    notes === undefined
+      ? (notes_) => createNotes({ variables: { project, date, notes: notes_ } })
+      : (notes_) => updateNotes({ variables: { project, date, notes: notes_ } })
 
   const [value, setValue] = useState(notes)
 
@@ -212,7 +214,9 @@ const Notes = ({ project, notes, date, setNotes }) => {
     e.stopPropagation()
     switch (e.key) {
       case 'Escape':
-        updateOrCreate(value)
+        if (value) {
+          createOrUpdate(value)
+        }
         document.querySelector(`#day${date.getDate()}`)?.focus()
         setNotes(null)
         break

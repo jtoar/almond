@@ -9,20 +9,9 @@ export const schema = gql`
 
   type Query {
     projects: [Project!]!
-    project(id: Int!): Project
-  }
-
-  input CreateProjectInput {
-    name: String!
-  }
-
-  input UpdateProjectInput {
-    name: String
   }
 
   type Mutation {
-    createProject(input: CreateProjectInput!): Project!
-    updateProject(id: Int!, input: UpdateProjectInput!): Project!
-    deleteProject(id: Int!): Project!
+    createProject(name: String!): Project!
   }
 `

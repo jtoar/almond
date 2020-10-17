@@ -35,6 +35,18 @@ export default new InMemoryCache({
             return incoming
           },
         },
+        createProject: {
+          merge(_, incoming, { cache }) {
+            cache.modify({
+              fields: {
+                projects(existing) {
+                  return [...existing, incoming]
+                },
+              },
+            })
+            return incoming
+          },
+        },
       },
     },
   },
