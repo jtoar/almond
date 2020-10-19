@@ -27,7 +27,7 @@ async function main() {
     })
     await db.project.create({
       data: {
-        name: 'almond',
+        name: 'calmond',
       },
     })
   }

@@ -11,13 +11,12 @@ export const schema = gql`
 
   type Query {
     daysByProjectMonth(project: String!, month: String!): [Day!]!
-    dayByProjectDate(project: String!, date: DateTime!): Day
   }
 
   type Mutation {
     createDay(project: String!, date: DateTime!): Day!
+    createDayWithNotes(project: String!, date: DateTime!, notes: String!): Day!
     toggleHasEntry(project: String!, date: DateTime!): Day!
     updateNotes(project: String!, date: DateTime!, notes: String!): Day!
-    createDayWithNotes(project: String!, date: DateTime!, notes: String!): Day!
   }
 `

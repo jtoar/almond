@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react'
 import { useMutation } from '@redwoodjs/web'
 import { navigate, routes } from '@redwoodjs/router'
 
-import { toMonthIndex } from 'common/common'
-
 import DaysCell from 'src/components/DaysCell'
 import ProjectsCell from 'src/components/ProjectsCell'
 
@@ -185,3 +183,6 @@ const ProjectMonthCalendar = ({ children }) => {
 }
 
 export default ProjectMonthPage
+
+const toMonthIndex = (month) =>
+  new Date(`${new Date().getFullYear()} ${month}`).getMonth()

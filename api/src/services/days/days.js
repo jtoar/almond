@@ -1,5 +1,7 @@
 import { db } from 'src/lib/db'
-import { toMonthIndex } from 'common/common'
+
+const toMonthIndex = (month) =>
+  new Date(`${new Date().getFullYear()} ${month}`).getMonth()
 
 export const daysByProjectMonth = ({ project, month }) => {
   return db.day.findMany({
@@ -8,17 +10,6 @@ export const daysByProjectMonth = ({ project, month }) => {
       date: {
         gte: new Date(2020, toMonthIndex(month)),
         lte: new Date(2020, toMonthIndex(month) + 1, 0),
-      },
-    },
-  })
-}
-
-export const dayByProjectDate = ({ project, date }) => {
-  return db.day.findOne({
-    where: {
-      projectName_date: {
-        projectName: project,
-        date,
       },
     },
   })
@@ -75,11 +66,6 @@ export const toggleHasEntry = async ({ project, date }) => {
   })
 }
 
-export const Day = {
-  project: (_obj, { root }) =>
-    db.day.findOne({ where: { id: root.id } }).project(),
-}
-
 export const updateNotes = ({ project, date, notes }) => {
   return db.day.update({
     where: {
@@ -92,4 +78,9 @@ export const updateNotes = ({ project, date, notes }) => {
       notes,
     },
   })
+}
+
+export const Day = {
+  project: (_obj, { root }) =>
+    db.day.findOne({ where: { id: root.id } }).project(),
 }
