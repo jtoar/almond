@@ -13,9 +13,9 @@
     ]
   },
   "dependencies": {
-    "@redwoodjs/forms": "^0.19.3",
-    "@redwoodjs/router": "^0.19.3",
-    "@redwoodjs/web": "^0.19.3",
+    "@redwoodjs/forms": "^0.19.5-canary.21",
+    "@redwoodjs/router": "^0.19.5-canary.21",
+    "@redwoodjs/web": "^0.19.5-canary.21",
     "@tailwindcss/ui": "^0.6.2",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",

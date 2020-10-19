@@ -6,7 +6,7 @@ import Routes from 'src/Routes'
 
 import './index.css'
 
-import cache from './cache'
+import cache from './cache.js'
 
 ReactDOM.render(
   <FatalErrorBoundary page={FatalErrorPage}>

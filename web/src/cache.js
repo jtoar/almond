@@ -1,6 +1,6 @@
 import { InMemoryCache } from '@apollo/client'
 
-export default new InMemoryCache({
+const cache = new InMemoryCache({
   typePolicies: {
     Day: {
       keyFields: ['projectName', 'date'],
@@ -51,3 +51,5 @@ export default new InMemoryCache({
     },
   },
 })
+
+export default cache
