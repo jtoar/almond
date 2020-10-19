@@ -15,11 +15,11 @@ const goTrueClient = new GoTrue({
 
 ReactDOM.render(
   <FatalErrorBoundary page={FatalErrorPage}>
-    <AuthProvider client={goTrueClient} type="goTrue">
-      <RedwoodProvider>
-        <Routes />
-      </RedwoodProvider>
-    </AuthProvider>
+    {/* <AuthProvider client={goTrueClient} type="goTrue"> */}
+    <RedwoodProvider>
+      <Routes />
+    </RedwoodProvider>
+    {/* </AuthProvider> */}
   </FatalErrorBoundary>,
   document.getElementById('redwood-app')
 )
