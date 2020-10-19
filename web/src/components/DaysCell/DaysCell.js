@@ -203,7 +203,7 @@ const Notes = ({ project, notes, date, setNotes }) => {
       ? (notes_) => createNotes({ variables: { project, date, notes: notes_ } })
       : (notes_) => updateNotes({ variables: { project, date, notes: notes_ } })
 
-  const [value, setValue] = useState(notes)
+  const [value, setValue] = useState(notes || '')
 
   const handleChange = (e) => {
     setValue(e.target.value)
@@ -213,9 +213,7 @@ const Notes = ({ project, notes, date, setNotes }) => {
     e.stopPropagation()
     switch (e.key) {
       case 'Escape':
-        if (value) {
-          createOrUpdate(value)
-        }
+        createOrUpdate(value)
         document.querySelector(`#day${date.getDate()}`)?.focus()
         setNotes(null)
         break
