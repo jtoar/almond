@@ -17,7 +17,7 @@ export const Empty = () => <div>Empty</div>
 
 export const Failure = ({ error }) => <div>Error: {error.message}</div>
 
-export const Success = ({ projects }) => {
+export const Success = ({ projects, selected }) => {
   const handleKeyDown = (e) => {
     switch (e.key) {
       case 'j':
@@ -32,6 +32,7 @@ export const Success = ({ projects }) => {
   }
 
   const projectMonthPageLinks = projects.map((project) => {
+    const isSelected = project.name === selected
     return (
       <Link
         key={project.id}
@@ -42,15 +43,16 @@ export const Success = ({ projects }) => {
             .toLowerCase(),
         })}
         onKeyDown={handleKeyDown}
+        className={
+          isSelected
+            ? 'bg-gray-200 shadow-br-inset rounded px-2 py-1'
+            : 'hover:bg-gray-200 hover:shadow-br rounded px-2 py-1'
+        }
       >
         {project.name}
       </Link>
     )
   })
 
-  return (
-    <div className="flex flex-col px-4 py-2 space-y-2 font-mono tracking-tight">
-      {projectMonthPageLinks}
-    </div>
-  )
+  return <div className="flex flex-col">{projectMonthPageLinks}</div>
 }
