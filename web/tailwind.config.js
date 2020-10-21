@@ -9,10 +9,13 @@ module.exports = {
   theme: {
     extend: {
       boxShadow: {
-        kp: `3px 3px ${defaultTheme.colors.gray[500]}`,
+        br: `3px 3px ${defaultTheme.colors.gray[400]}`,
+        b: `0px 3px ${defaultTheme.colors.gray[400]}`,
+        'br-inset': `inset 3px 3px ${defaultTheme.colors.gray[400]}`,
+        'b-inset': `inset 0px 3px ${defaultTheme.colors.gray[400]}`,
       },
     },
   },
   variants: {},
-  plugins: [require('@tailwindcss/ui')],
+  plugins: [],
 }
