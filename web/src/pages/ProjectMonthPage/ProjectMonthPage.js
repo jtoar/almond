@@ -6,6 +6,8 @@ import { Form, TextField, Submit } from '@redwoodjs/forms'
 import DaysCell from 'src/components/DaysCell'
 import ProjectsCell from 'src/components/ProjectsCell'
 
+import { toMonthIndex } from 'src/lib/date'
+
 const ProjectMonthPage = ({ project, month }) => {
   const [notes, setNotes] = useState(null)
 
@@ -208,8 +210,5 @@ const ProjectMonthCalendar = ({ children }) => {
 //     </div>
 //   )
 // }
-
-const toMonthIndex = (month) =>
-  new Date(`${new Date().getFullYear()} ${month}`).getMonth()
 
 export default ProjectMonthPage
