@@ -7,7 +7,7 @@ import { useMachine } from '@xstate/react'
 import DaysCell from 'src/components/DaysCell'
 import ProjectsCell from 'src/components/ProjectsCell'
 
-import { toMonthIndex } from 'src/lib/date'
+import { getCurrentMonth, toMonthIndex } from 'src/lib/date'
 import { useClickOutside, useKeyDown } from 'src/lib/hooks'
 
 const ProjectMonthPage = ({ project, month }) => {
