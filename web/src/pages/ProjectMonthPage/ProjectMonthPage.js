@@ -8,6 +8,7 @@ import DaysCell from 'src/components/DaysCell'
 import ProjectsCell from 'src/components/ProjectsCell'
 
 import { toMonthIndex } from 'src/lib/date'
+import { useClickOutside, useKeyDown } from 'src/lib/hooks'
 
 const ProjectMonthPage = ({ project, month }) => {
   const [notes, setNotes] = useState(null)
@@ -55,31 +56,13 @@ const toggleMachine = createMachine({
 const ProjectMonthNav = ({ project }) => {
   const [current, send] = useMachine(toggleMachine)
 
-  useEffect(() => {
-    const handler = (e) => {
-      switch (e.key) {
-        case 'k':
-          if (e.ctrlKey) {
-            e.preventDefault()
-            send('TOGGLE')
-          }
-          break
-        case 'Escape':
-          send('HIDE')
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handler)
-
-    return () => {
-      document.removeEventListener('keydown', handler)
-    }
-  }, [send])
+  const ref = useClickOutside(() => send('HIDE'))
+  useKeyDown('k', () => send('TOGGLE'), { control: true })
+  useKeyDown('Escape', () => send('HIDE'))
 
   return (
     // Menu
-    <div className="relative">
+    <div className="relative" ref={ref}>
       {/* Menu button */}
       <button
         onClick={() => send('TOGGLE')}
@@ -211,6 +194,8 @@ const ProjectMonthCalendar = ({ children }) => {
     }
   }
 
+  const ref = useClickOutside(() => send('CANCEL'))
+
   const daysOfTheWeek = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
   const header = daysOfTheWeek.map((day) => {
     return (
@@ -224,6 +209,7 @@ const ProjectMonthCalendar = ({ children }) => {
     <div className="w-64 grid grid-cols-7 border border-gray-900 rounded shadow-br">
       {current.matches('jumping') ? (
         <input
+          ref={ref}
           type="text"
           autoFocus={true}
           className="absolute m-1 w-8 bg-red-500 rounded focus:outline-none text-center shadow-br"
