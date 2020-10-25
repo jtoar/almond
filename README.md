@@ -1,4 +1,4 @@
-# Almond
+# Calmond
 
 Calm calendaring.
 
