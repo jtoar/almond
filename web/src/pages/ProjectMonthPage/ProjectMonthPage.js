@@ -36,7 +36,6 @@ const ProjectMonthPage = ({ project, month }) => {
 const ProjectMonthNav = ({ project }) => {
   const [showProjectMenu, setShowProjectMenu] = useState(false)
 
-  // @todo
   useEffect(() => {
     const handleKeydown = (e) => {
       switch (e.key) {
