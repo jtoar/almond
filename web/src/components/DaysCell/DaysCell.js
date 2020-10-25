@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useMutation } from '@redwoodjs/web'
 
+import { toMonthIndex, isToday } from 'src/lib/date'
+
 export const QUERY = gql`
   query DaysByProjectMonthQuery($project: String!, $month: String!) {
     daysByProjectMonth(project: $project, month: $month) {
@@ -230,14 +232,3 @@ const Notes = ({ project, notes, date, setNotes }) => {
     />
   )
 }
-
-const isToday = (date) => {
-  const today = new Date()
-  return (
-    date.getTime() ===
-    new Date(2020, today.getMonth(), today.getDate()).getTime()
-  )
-}
-
-const toMonthIndex = (month) =>
-  new Date(`${new Date().getFullYear()} ${month}`).getMonth()
