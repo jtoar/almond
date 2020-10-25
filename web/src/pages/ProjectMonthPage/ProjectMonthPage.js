@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@redwoodjs/web'
 import { navigate, routes } from '@redwoodjs/router'
-import { Form, TextField, Submit } from '@redwoodjs/forms'
+import { createMachine } from 'xstate'
+import { useMachine } from '@xstate/react'
 
 import DaysCell from 'src/components/DaysCell'
 import ProjectsCell from 'src/components/ProjectsCell'
@@ -33,8 +34,26 @@ const ProjectMonthPage = ({ project, month }) => {
   )
 }
 
+const toggleMachine = createMachine({
+  id: 'toggle',
+  initial: 'hidden',
+  states: {
+    hidden: {
+      on: {
+        TOGGLE: 'visible',
+      },
+    },
+    visible: {
+      on: {
+        HIDE: 'hidden',
+        TOGGLE: 'hidden',
+      },
+    },
+  },
+})
+
 const ProjectMonthNav = ({ project }) => {
-  const [showProjectMenu, setShowProjectMenu] = useState(false)
+  const [current, send] = useMachine(toggleMachine)
 
   useEffect(() => {
     const handleKeydown = (e) => {
@@ -42,11 +61,11 @@ const ProjectMonthNav = ({ project }) => {
         case 'k':
           if (e.ctrlKey) {
             e.preventDefault()
-            setShowDialog(true)
+            send('TOGGLE')
           }
           break
         case 'Escape':
-          setShowDialog(false)
+          send('HIDE')
           break
       }
     }
@@ -56,25 +75,25 @@ const ProjectMonthNav = ({ project }) => {
     return () => {
       window.removeEventListener('keydown', id)
     }
-  }, [])
+  }, [send])
 
   return (
     // Menu
     <div className="relative">
       {/* Menu button */}
       <button
-        onClick={() =>
-          setShowProjectMenu((showProjectMenu) => !showProjectMenu)
-        }
+        onClick={() => send('TOGGLE')}
         className={
           'px-2 py-1 border border-gray-900 rounded focus:outline-none ' +
-          (showProjectMenu ? 'bg-gray-200 shadow-br-inset' : 'shadow-br')
+          (current.matches('visible')
+            ? 'bg-gray-200 shadow-br-inset'
+            : 'shadow-br')
         }
       >
         {project}
       </button>
       {/* Menu items */}
-      {showProjectMenu ? (
+      {current.matches('visible') ? (
         <div className="absolute z-10 top-6 left-2">
           <ProjectMenu project={project} />
         </div>
@@ -136,8 +155,31 @@ const ProjectMenu = ({ project }) => {
   )
 }
 
+const jumpMachine = createMachine({
+  id: 'jump',
+  initial: 'idle',
+  states: {
+    idle: {
+      on: {
+        JUMP: 'jumping',
+      },
+    },
+    jumping: {
+      on: {
+        LAND: {
+          target: 'idle',
+          actions: (_, { day }) => {
+            document.querySelector(`#day${day}`)?.focus()
+          },
+        },
+        CANCEL: 'idle',
+      },
+    },
+  },
+})
+
 const ProjectMonthCalendar = ({ children }) => {
-  const [jumping, setJumping] = useState(false)
+  const [current, send] = useMachine(jumpMachine)
 
   useEffect(() => {
     const handleKeydown = (e) => {
@@ -145,7 +187,7 @@ const ProjectMonthCalendar = ({ children }) => {
         case 'j':
           e.preventDefault()
           e.ctrlKey
-            ? setJumping(true)
+            ? send('JUMP')
             : document.querySelector(`#day${new Date().getDate()}`)?.focus()
       }
     }
@@ -155,17 +197,16 @@ const ProjectMonthCalendar = ({ children }) => {
     return () => {
       window.removeEventListener('keydown', id)
     }
-  }, [])
+  }, [send])
 
   const handleKeyDown = (e) => {
     e.stopPropagation()
     switch (e.key) {
       case 'Enter':
-        document.querySelector(`#day${e.target.value}`)?.focus()
-        setJumping(false)
+        send({ type: 'LAND', day: e.target.value })
         break
       case 'Escape':
-        setJumping(false)
+        send('CANCEL')
         break
     }
   }
@@ -181,7 +222,7 @@ const ProjectMonthCalendar = ({ children }) => {
 
   return (
     <div className="w-64 grid grid-cols-7 border border-gray-900 rounded shadow-br">
-      {jumping ? (
+      {current.matches('jumping') ? (
         <input
           type="text"
           autoFocus={true}
