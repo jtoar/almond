@@ -44,9 +44,10 @@ export const Success = ({ projects, selected }) => {
         })}
         onKeyDown={handleKeyDown}
         className={
-          isSelected
+          'focus:outline-none focus:bg-gray-200 focus:shadow-br ' +
+          (isSelected
             ? 'bg-gray-200 shadow-br-inset rounded px-2 py-1'
-            : 'hover:bg-gray-200 hover:shadow-br rounded px-2 py-1'
+            : 'hover:bg-gray-200 hover:shadow-br rounded px-2 py-1 ')
         }
       >
         {project.name}

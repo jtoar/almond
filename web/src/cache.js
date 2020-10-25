@@ -47,6 +47,20 @@ const cache = new InMemoryCache({
             return incoming
           },
         },
+        deleteProjectByName: {
+          merge(_, incoming, { cache }) {
+            cache.modify({
+              fields: {
+                projects(existing) {
+                  return existing.filter(
+                    (project) => project.__ref !== incoming.__ref
+                  )
+                },
+              },
+            })
+            return incoming
+          },
+        },
       },
     },
   },

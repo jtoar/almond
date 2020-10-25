@@ -13,5 +13,7 @@ export const schema = gql`
 
   type Mutation {
     createProject(name: String!): Project!
+    updateProjectNameByName(name: String!, newName: String!): Project!
+    deleteProjectByName(name: String!): Project!
   }
 `

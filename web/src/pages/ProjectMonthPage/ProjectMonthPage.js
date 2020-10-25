@@ -85,39 +85,83 @@ const ProjectMonthNav = ({ project }) => {
   )
 }
 
+const UPDATE_PROJECT_NAME_BY_NAME = gql`
+  mutation UpdateProjectNameByName($name: String!, $newName: String!) {
+    updateProjectNameByName(name: $name, newName: $newName) {
+      id
+      updatedAt
+      name
+    }
+  }
+`
+
+const DELETE_PROJECT_BY_NAME = gql`
+  mutation DeleteProjectByName($name: String!) {
+    deleteProjectByName(name: $name) {
+      id
+    }
+  }
+`
+
+const useDeleteProjectByName = (project) => {
+  const [deleteProjectByName] = useMutation(DELETE_PROJECT_BY_NAME, {
+    variables: {
+      name: project,
+    },
+  })
+
+  return deleteProjectByName
+}
+
 const ProjectMenu = ({ project }) => {
-  const [createProject] = useMutation(CREATE_PROJECT)
-  const [value, setValue] = useState('')
+  const [value, setValue] = useState(project)
+  const [updateProject] = useMutation(UPDATE_PROJECT_NAME_BY_NAME)
+
+  const handleBlur = () => {
+    if (value && value != project) {
+      updateProject({
+        variables: {
+          name: project,
+          newName: value,
+        },
+      })
+    }
+  }
+
+  const deleteProjectByName = useDeleteProjectByName(project)
 
   const handleClick = () => {
-    createProject({ variables: { name: value } })
-    setValue('')
-    const month = Intl.DateTimeFormat('en-US', { month: 'long' })
-      .format(new Date())
-      .toLowerCase()
-    navigate(routes.projectMonth({ project: value, month: month }))
+    deleteProjectByName()
+    navigate(
+      routes.projectMonth({
+        project: document.querySelector('a').textContent,
+        month: getCurrentMonth(),
+      })
+    )
   }
 
   return (
     <div className="w-48 bg-gray-50 border border-gray-900 rounded shadow-br divide-y divide-gray-900">
-      {/* create project */}
+      {/* rename, remove project */}
       <div className="px-1 py-2">
         <div className="flex space-x-1">
           <input
             type="text"
-            placeholder="project"
-            autoFocus={true}
             value={value}
             onChange={({ target: { value } }) => setValue(value)}
             className="w-full px-2 py-1 focus:bg-gray-200 focus:shadow-br-inset rounded focus:outline-none"
+            onBlur={handleBlur}
           />
           <button
-            onClick={handleClick}
             className="flex-shrink-0 border border-gray-900 rounded px-2"
+            onClick={handleClick}
           >
-            add +
+            remove -
           </button>
         </div>
+      </div>
+      <div className="px-1 py-2">
+        <CreateProject />
       </div>
       {/* choose project */}
       <div className="px-1 py-2">
