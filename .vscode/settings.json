@@ -7,5 +7,10 @@
   },
   "[prisma]": {
     "editor.formatOnSave": true
-  }
+  },
+  "conventionalCommits.scopes": [
+    "web",
+    "homepage",
+    "projectmonthpage"
+  ]
 }
