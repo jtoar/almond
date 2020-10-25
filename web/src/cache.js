@@ -40,7 +40,7 @@ const cache = new InMemoryCache({
             cache.modify({
               fields: {
                 projects(existing) {
-                  return [...existing, incoming]
+                  return [incoming, ...existing]
                 },
               },
             })

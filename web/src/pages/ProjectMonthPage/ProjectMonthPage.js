@@ -138,6 +138,75 @@ const ProjectMenu = ({ project }) => {
   )
 }
 
+const CREATE_PROJECT = gql`
+  mutation CreateProjectMutation($name: String!) {
+    createProject(name: $name) {
+      id
+      createdAt
+      updatedAt
+      name
+    }
+  }
+`
+
+const useCreateProject = () => {
+  const [mutation] = useMutation(CREATE_PROJECT)
+
+  const [value, setValue] = useState('')
+
+  const createProject = () => {
+    mutation({ variables: { name: value } })
+    setValue('')
+    navigate(
+      routes.projectMonth({
+        project: value,
+        month: getCurrentMonth(),
+      })
+    )
+  }
+
+  return [value, setValue, createProject]
+}
+
+const CreateProject = () => {
+  const [value, setValue, createProject] = useCreateProject()
+
+  /**
+   * On j, focus the list.
+   * Not really working...
+   */
+  // const handleKeyDown = (e) => {
+  //   switch (e.key) {
+  //     case 'j':
+  //       e.stopPropagation()
+  //       if (e.ctrlKey) {
+  //         document.querySelector('a')?.focus()
+  //         break
+  //       }
+  //   }
+  // }
+
+  return (
+    <div className="flex space-x-1">
+      <input
+        type="text"
+        placeholder="project"
+        value={value}
+        onChange={({ target: { value } }) => setValue(value)}
+        autoFocus={true}
+        className="w-full px-2 py-1 focus:bg-gray-200 focus:shadow-br-inset rounded focus:outline-none"
+        // onKeyDown={handleKeyDown}
+      />
+      <button
+        className="flex-shrink-0 border border-gray-900 rounded px-2"
+        onClick={createProject}
+      >
+        add +
+      </button>
+    </div>
+  )
+}
+
 const jumpMachine = createMachine({
   id: 'jump',
   initial: 'idle',
