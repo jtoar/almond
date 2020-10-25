@@ -56,7 +56,7 @@ const ProjectMonthNav = ({ project }) => {
   const [current, send] = useMachine(toggleMachine)
 
   useEffect(() => {
-    const handleKeydown = (e) => {
+    const handler = (e) => {
       switch (e.key) {
         case 'k':
           if (e.ctrlKey) {
@@ -70,10 +70,10 @@ const ProjectMonthNav = ({ project }) => {
       }
     }
 
-    const id = window.addEventListener('keydown', handleKeydown)
+    document.addEventListener('keydown', handler)
 
     return () => {
-      window.removeEventListener('keydown', id)
+      document.removeEventListener('keydown', handler)
     }
   }, [send])
 
@@ -182,7 +182,7 @@ const ProjectMonthCalendar = ({ children }) => {
   const [current, send] = useMachine(jumpMachine)
 
   useEffect(() => {
-    const handleKeydown = (e) => {
+    const handler = (e) => {
       switch (e.key) {
         case 'j':
           e.preventDefault()
@@ -192,10 +192,10 @@ const ProjectMonthCalendar = ({ children }) => {
       }
     }
 
-    const id = window.addEventListener('keydown', handleKeydown)
+    document.addEventListener('keydown', handler)
 
     return () => {
-      window.removeEventListener('keydown', id)
+      document.removeEventListener('keydown', handler)
     }
   }, [send])
 
