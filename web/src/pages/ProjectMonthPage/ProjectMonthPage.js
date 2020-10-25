@@ -98,8 +98,6 @@ const ProjectMenu = ({ project }) => {
     navigate(routes.projectMonth({ project: value, month: month }))
   }
 
-  // gonna need some validation...
-
   return (
     <div className="w-48 bg-gray-50 border border-gray-900 rounded shadow-br divide-y divide-gray-900">
       {/* create project */}
