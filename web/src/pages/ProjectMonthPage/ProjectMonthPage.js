@@ -85,15 +85,6 @@ const ProjectMonthNav = ({ project }) => {
   )
 }
 
-const CREATE_PROJECT = gql`
-  mutation CreateProjectMutation($name: String!) {
-    createProject(name: $name) {
-      id
-      name
-    }
-  }
-`
-
 const ProjectMenu = ({ project }) => {
   const [createProject] = useMutation(CREATE_PROJECT)
   const [value, setValue] = useState('')
