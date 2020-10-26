@@ -1,4 +1,5 @@
 import { Link, routes } from '@redwoodjs/router'
+import { getCurrentMonth } from 'src/lib/date'
 
 export const QUERY = gql`
   query ProjectsQuery {
@@ -38,9 +39,7 @@ export const Success = ({ projects, selected }) => {
         key={project.id}
         to={routes.projectMonth({
           project: project.name,
-          month: Intl.DateTimeFormat('en-US', { month: 'long' })
-            .format(new Date())
-            .toLowerCase(),
+          month: getCurrentMonth(),
         })}
         onKeyDown={handleKeyDown}
         className={
