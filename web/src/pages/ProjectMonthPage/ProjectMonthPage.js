@@ -215,44 +215,47 @@ const CREATE_PROJECT = gql`
   }
 `
 
-const createProjectMachine = createMachine({
-  id: 'createProject',
-  initial: 'typing',
-  context: {
-    value: '',
-  },
-  states: {
-    typing: {
-      on: {
-        CHANGE: {
-          actions: assign({
-            value: (context, event) => event.value,
-          }),
-        },
-        CREATE: {
-          actions: [
-            'createProject',
-            // Navigate to the new project
-            (context) =>
-              navigate(
-                routes.projectMonth({
-                  project: context.value,
-                  month: getCurrentMonth(),
-                })
-              ),
-            'closeNav',
-          ],
+const createProjectMachine = createMachine(
+  {
+    id: 'createProject',
+    initial: 'typing',
+    context: {
+      value: '',
+    },
+    states: {
+      typing: {
+        on: {
+          CHANGE: {
+            actions: ['assignToValue'],
+          },
+          CREATE: {
+            actions: ['createProjectFromValue', 'navigateToValue', 'closeNav'],
+          },
         },
       },
     },
   },
-})
+  {
+    actions: {
+      assignToValue: assign({
+        value: (_, { value }) => value,
+      }),
+      navigateToValue: ({ value }) =>
+        navigate(
+          routes.projectMonth({
+            project: value,
+            month: getCurrentMonth(),
+          })
+        ),
+    },
+  }
+)
 
 const CreateProject = ({ closeNav }) => {
   const [createProject] = useMutation(CREATE_PROJECT)
   const [current, send] = useMachine(createProjectMachine, {
     actions: {
-      createProject: (context) => {
+      createProjectFromValue: (context) => {
         createProject({ variables: { name: context.value } })
       },
       closeNav,
