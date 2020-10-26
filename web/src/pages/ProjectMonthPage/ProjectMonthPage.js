@@ -78,7 +78,9 @@ const ProjectMonthNav = ({ project }) => {
       {/* Menu items */}
       {current.matches('visible') ? (
         <div className="absolute z-10 top-6 left-2">
-          <ProjectMenu project={project} />
+          <ProjectMenu project={project}>
+            <CreateProject closeNav={() => send('HIDE')} />
+          </ProjectMenu>
         </div>
       ) : null}
     </div>
@@ -140,7 +142,7 @@ const projectMenuMachine = (project) =>
     },
   })
 
-const ProjectMenu = ({ project }) => {
+const ProjectMenu = ({ project, children }) => {
   const [updateProject] = useMutation(UPDATE_PROJECT_NAME_BY_NAME)
   const deleteProjectByName = useDeleteProjectByName(project)
 
@@ -193,9 +195,7 @@ const ProjectMenu = ({ project }) => {
           </button>
         </div>
       </div>
-      <div className="px-1 py-2">
-        <CreateProject />
-      </div>
+      <div className="px-1 py-2">{children}</div>
       {/* choose project */}
       <div className="px-1 py-2">
         <ProjectsCell selected={project} />
@@ -215,41 +215,74 @@ const CREATE_PROJECT = gql`
   }
 `
 
-const useCreateProject = () => {
-  const [mutation] = useMutation(CREATE_PROJECT)
+const createProjectMachine = createMachine({
+  id: 'createProject',
+  initial: 'typing',
+  context: {
+    value: '',
+  },
+  states: {
+    typing: {
+      on: {
+        CHANGE: {
+          actions: assign({
+            value: (context, event) => event.value,
+          }),
+        },
+        CREATE: {
+          actions: [
+            'createProject',
+            // Navigate to the new project
+            (context) =>
+              navigate(
+                routes.projectMonth({
+                  project: context.value,
+                  month: getCurrentMonth(),
+                })
+              ),
+            'closeNav',
+          ],
+        },
+      },
+    },
+  },
+})
 
-  const [value, setValue] = useState('')
+const CreateProject = ({ closeNav }) => {
+  const [createProject] = useMutation(CREATE_PROJECT)
+  const [current, send] = useMachine(createProjectMachine, {
+    actions: {
+      createProject: (context) => {
+        createProject({ variables: { name: context.value } })
+      },
+      closeNav,
+    },
+  })
 
-  const createProject = () => {
-    mutation({ variables: { name: value } })
-    setValue('')
-    navigate(
-      routes.projectMonth({
-        project: value,
-        month: getCurrentMonth(),
-      })
-    )
+  const handleKeyDown = (e) => {
+    switch (e.key) {
+      case 'Enter':
+        if (e.ctrlKey) {
+          send('CREATE')
+        }
+        break
+    }
   }
-
-  return [value, setValue, createProject]
-}
-
-const CreateProject = () => {
-  const [value, setValue, createProject] = useCreateProject()
 
   return (
     <div className="flex space-x-1">
       <input
         type="text"
         placeholder="project"
-        value={value}
-        onChange={({ target: { value } }) => setValue(value)}
+        value={current.context.value}
+        onChange={({ target: { value } }) => send('CHANGE', { value })}
         autoFocus={true}
         className="w-full px-2 py-1 focus:bg-gray-200 focus:shadow-br-inset rounded focus:outline-none"
+        onKeyDown={handleKeyDown}
       />
       <button
         className="flex-shrink-0 border border-gray-900 rounded px-2"
-        onClick={createProject}
+        onClick={() => send('CREATE')}
       >
         add +
       </button>
