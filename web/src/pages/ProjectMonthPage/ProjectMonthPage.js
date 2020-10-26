@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useMutation } from '@redwoodjs/web'
 import { navigate, routes } from '@redwoodjs/router'
-import { createMachine } from 'xstate'
+import { createMachine, assign } from 'xstate'
 import { useMachine } from '@xstate/react'
 
 import DaysCell from 'src/components/DaysCell'
@@ -113,31 +113,64 @@ const useDeleteProjectByName = (project) => {
   return deleteProjectByName
 }
 
-const ProjectMenu = ({ project }) => {
-  const [value, setValue] = useState(project)
-  const [updateProject] = useMutation(UPDATE_PROJECT_NAME_BY_NAME)
-
-  const handleBlur = () => {
-    if (value && value != project) {
-      updateProject({
-        variables: {
-          name: project,
-          newName: value,
+const projectMenuMachine = (project) =>
+  createMachine({
+    id: 'projectMenu',
+    initial: 'active',
+    context: {
+      project,
+      value: project,
+    },
+    states: {
+      active: {
+        on: {
+          UPDATE: {
+            actions: ['updateProject', 'navigate'],
+          },
+          DELETE: {
+            actions: ['deleteProject', 'navigate'],
+          },
+          TYPE: {
+            actions: assign({
+              value: (context, event) => (context.value = event.value),
+            }),
+          },
         },
-      })
-    }
-  }
+      },
+    },
+  })
 
+const ProjectMenu = ({ project }) => {
+  const [updateProject] = useMutation(UPDATE_PROJECT_NAME_BY_NAME)
   const deleteProjectByName = useDeleteProjectByName(project)
 
-  const handleClick = () => {
-    deleteProjectByName()
-    navigate(
-      routes.projectMonth({
-        project: document.querySelector('a').textContent,
-        month: getCurrentMonth(),
-      })
-    )
+  const [current, send] = useMachine(projectMenuMachine(project), {
+    actions: {
+      updateProject: (context, { project, value }) =>
+        updateProject({
+          variables: {
+            name: project,
+            newName: value,
+          },
+        }),
+      deleteProject: () => {
+        deleteProjectByName()
+      },
+      navigate: (context, event) => {
+        navigate(
+          routes.projectMonth({
+            project: event?.value || document.querySelector('a').textContent,
+            month: getCurrentMonth(),
+          })
+        )
+      },
+    },
+  })
+
+  const handleBlur = () => {
+    if (current.context.value && current.context.value != project) {
+      send('UPDATE', { project, value: current.context.value })
+    }
   }
 
   return (
@@ -147,14 +180,14 @@ const ProjectMenu = ({ project }) => {
         <div className="flex space-x-1">
           <input
             type="text"
-            value={value}
-            onChange={({ target: { value } }) => setValue(value)}
+            value={current.context.value}
+            onChange={({ target: { value } }) => send('TYPE', { value })}
             className="w-full px-2 py-1 focus:bg-gray-200 focus:shadow-br-inset rounded focus:outline-none"
             onBlur={handleBlur}
           />
           <button
             className="flex-shrink-0 border border-gray-900 rounded px-2"
-            onClick={handleClick}
+            onClick={() => send('DELETE')}
           >
             remove -
           </button>
