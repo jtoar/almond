@@ -237,21 +237,6 @@ const useCreateProject = () => {
 const CreateProject = () => {
   const [value, setValue, createProject] = useCreateProject()
 
-  /**
-   * On j, focus the list.
-   * Not really working...
-   */
-  // const handleKeyDown = (e) => {
-  //   switch (e.key) {
-  //     case 'j':
-  //       e.stopPropagation()
-  //       if (e.ctrlKey) {
-  //         document.querySelector('a')?.focus()
-  //         break
-  //       }
-  //   }
-  // }
-
   return (
     <div className="flex space-x-1">
       <input
@@ -261,7 +246,6 @@ const CreateProject = () => {
         onChange={({ target: { value } }) => setValue(value)}
         autoFocus={true}
         className="w-full px-2 py-1 focus:bg-gray-200 focus:shadow-br-inset rounded focus:outline-none"
-        // onKeyDown={handleKeyDown}
       />
       <button
         className="flex-shrink-0 border border-gray-900 rounded px-2"
