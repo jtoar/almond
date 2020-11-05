@@ -44,7 +44,7 @@ export const createDayWithNotes = ({ project, date, notes }) => {
 }
 
 export const toggleHasEntry = async ({ project, date }) => {
-  const { hasEntry } = await db.day.findOne({
+  let day = await db.day.findOne({
     where: {
       projectName_date: {
         projectName: project,
@@ -53,17 +53,21 @@ export const toggleHasEntry = async ({ project, date }) => {
     },
   })
 
-  return db.day.update({
-    where: {
-      projectName_date: {
-        projectName: project,
-        date,
+  if (day) {
+    return db.day.update({
+      where: {
+        projectName_date: {
+          projectName: project,
+          date,
+        },
       },
-    },
-    data: {
-      hasEntry: !hasEntry,
-    },
-  })
+      data: {
+        hasEntry: !day.hasEntry,
+      },
+    })
+  }
+
+  return createDay({ project, date })
 }
 
 export const updateNotes = ({ project, date, notes }) => {

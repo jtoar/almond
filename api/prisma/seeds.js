@@ -12,6 +12,11 @@ async function main() {
   if (!projects.length) {
     await db.project.create({
       data: {
+        name: 'hello',
+      },
+    })
+    await db.project.create({
+      data: {
         name: 'korean',
       },
     })
